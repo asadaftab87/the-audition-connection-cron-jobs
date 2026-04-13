@@ -5,9 +5,15 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
+    "pm2": "pm2 start dist/index.js --name remove-duplication",
     "start": "ts-node src/index.ts",
+    "start:prod": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "test": "echo \"No tests configured\""
+    "test": "echo \"No tests configured\"",
+    "pm2:reload": "pm2 reload remove-duplication",
+    "pm2:stop": "pm2 stop remove-duplication",
+    "pm2:delete": "pm2 delete remove-duplication",
+    "pm2:logs": "pm2 logs remove-duplication"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +25,7 @@
     "node-cron": "^4.2.1"
   },
   "devDependencies": {
+    "pm2": "^6.0.14",
     "@types/express": "^5.0.6",
     "@types/node": "^25.5.2",
     "@types/node-cron": "^3.0.11",
