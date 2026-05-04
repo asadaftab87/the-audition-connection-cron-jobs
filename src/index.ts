@@ -4,10 +4,18 @@ import cron from "node-cron";
 import dotenv from "dotenv";
 import path from "path";
 
-dotenv.config({
-  path: path.resolve(process.cwd(), ".env"),
+const envPath = path.resolve(__dirname, "../.env");
+const result = dotenv.config({
+  path: envPath,
   override: true,
 });
+
+if (result.error) {
+  console.warn(`[CONFIG] Warning: Could not load .env file from ${envPath}.`, result.error.message);
+} else {
+  console.log(`[CONFIG] Successfully loaded .env from ${envPath}`);
+}
+
 
 type WixDataItem = Record<string, unknown>;
 
@@ -62,8 +70,20 @@ function getCleanupCronExpression(): string | null {
 
 function validateEnv(): string[] {
   const required = ["WIX_AUTH_TOKEN", "WIX_SITE_ID"];
-  return required.filter((key) => !process.env[key]);
+  const missing = required.filter((key) => !process.env[key]);
+  
+  if (missing.length > 0) {
+    console.warn("[CONFIG] Environment Validation Failed:", {
+      missing,
+      cwd: process.cwd(),
+      envPath: path.resolve(__dirname, "../.env"),
+      nodeEnv: process.env.NODE_ENV,
+      port: process.env.PORT
+    });
+  }
+  return missing;
 }
+
 
 function getValue(item: WixDataItem, key: string): unknown {
   const rootValue = item[key];
